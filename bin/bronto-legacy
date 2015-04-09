@@ -50,7 +50,7 @@ RAW;
      */
     public function getSourcePath()
     {
-        return $this->_root . '/../src/';
+        return $this->_root . '/src/';
     }
 
     /**
@@ -60,7 +60,7 @@ RAW;
      */
     public function getTestsPath()
     {
-        return $this->_root . '/../tests/';
+        return $this->_root . '/tests/';
     }
 
     /**
@@ -70,7 +70,7 @@ RAW;
      */
     public function getDestSourcePath()
     {
-        return $this->_root . '/../legacy/src';
+        return $this->_root . '/legacy/src';
     }
 
     /**
@@ -80,7 +80,7 @@ RAW;
      */
     public function getDestTestPath()
     {
-        return $this->_root . '/../legacy/tests';
+        return $this->_root . '/legacy/tests';
     }
 
     /**
@@ -247,7 +247,12 @@ PHP;
      */
     public function run($args = array())
     {
-        $this->_root = array_key_exists('root', $args) ? $args['root'] : __DIR__;
+        if (array_key_exists('root', $args)) {
+            $dir = new SplFileInfo($args['root']);
+            $this->_root = $dir->getRealPath();
+        } else {
+            $this->_root = __DIR__ . '/..';
+        }
         $sources = array(
             $this->getSourcePath() => $this->getDestSourcePath(),
             $this->getTestsPath() => $this->getDestTestPath()
