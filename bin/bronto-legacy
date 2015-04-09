@@ -15,6 +15,7 @@ require BRONTO_LEGACY_INSTALL;
 class ConvertToLegacy {
 
     private $_doNotConvert = array('bootstrap.php');
+    private $_root;
 
     /**
      * Creates a generic conversion notice on all files that had to be
@@ -47,9 +48,9 @@ RAW;
      *
      * @return string
      */
-    public function getSourcePath($rootDir)
+    public function getSourcePath()
     {
-        return $rootDir . '/../src/';
+        return $this->_root . '/../src/';
     }
 
     /**
@@ -57,9 +58,9 @@ RAW;
      *
      * @return string
      */
-    public function getTestsPath($rootDir)
+    public function getTestsPath()
     {
-        return $rootDir . '/../tests/';
+        return $this->_root . '/../tests/';
     }
 
     /**
@@ -67,9 +68,9 @@ RAW;
      *
      * @return string
      */
-    public function getDestSourcePath($rootDir)
+    public function getDestSourcePath()
     {
-        return $rootDir . '/../legacy/src';
+        return $this->_root . '/../legacy/src';
     }
 
     /**
@@ -77,9 +78,9 @@ RAW;
      *
      * @return string
      */
-    public function getDestTestPath($rootDir)
+    public function getDestTestPath()
     {
-        return $rootDir . '/../legacy/tests';
+        return $this->_root . '/../legacy/tests';
     }
 
     /**
@@ -246,10 +247,10 @@ PHP;
      */
     public function run($args = array())
     {
-        $rootDir = array_key_exists('root', $args) ? $args['root'] : __DIR__;
+        $this->_root = array_key_exists('root', $args) ? $args['root'] : __DIR__;
         $sources = array(
-            $this->getSourcePath($rootDir) => $this->getDestSourcePath($rootDir),
-            $this->getTestsPath($rootDir) => $this->getDestTestPath($rootDir)
+            $this->getSourcePath() => $this->getDestSourcePath(),
+            $this->getTestsPath() => $this->getDestTestPath()
         );
 
         foreach ($sources as $source => $dest) {
