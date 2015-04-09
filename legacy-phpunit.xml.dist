@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="legacy/tests/bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="Bronto Common Legacy Test Suite">
+            <directory>legacy/tests/Bronto/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">legacy/src/Bronto/</directory>
+        </whitelist>
+    </filter>
+</phpunit>
