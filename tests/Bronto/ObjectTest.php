@@ -9,6 +9,12 @@ namespace Bronto;
  */
 class ObjectTest extends \PHPUnit_Framework_TestCase
 {
+    public function testSplitter()
+    {
+        $string = "dnsUseGlobalCache";
+        var_dump(preg_replace_callback('/([a-z0-9])([A-Z])/', "$1_$2", $string));
+    }
+
     /**
      * @test
      * @group pmc
