@@ -2,6 +2,11 @@
 
 namespace Bronto\Transfer\Curl;
 
+/**
+ * Implemented transfer adapter that handles cURL requests
+ *
+ * @author Philip Cali <philip.cali@bronto.com>
+ */
 class Adatper implements \Bronto\Transfer\Adatper
 {
     protected $_options;

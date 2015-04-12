@@ -2,6 +2,11 @@
 
 namespace Bronto\Transfer;
 
+/**
+ * Enum for common HTTP headers
+ *
+ * @author Philip Cali <philip.cali@bronto.com>
+ */
 interface Headers
 {
     const ACCEPT = 'Accept';
