@@ -13,6 +13,8 @@ class Request implements \Bronto\Transfer\Request
     private $_method;
     private $_uri;
     private $_options;
+    private $_curl;
+    private $_body;
     private $_headers = array();
     private $_params = array();
     private $_query = array();
@@ -23,12 +25,17 @@ class Request implements \Bronto\Transfer\Request
      * @param string $method
      * @param string $uri
      * @param \Bronto\Object $options
+     * @param \Bronto\Resource\Proxy $curl
      */
-    public function __construct($method, $uri, $options)
+    public function __construct($method, $uri, $options, $curl = null)
     {
         $this->_uri = $uri;
         $this->_method = $method;
         $this->_options = $options;
+        if (is_null($curl)) {
+            $curl = new \Bronto\Resource\Proxy("curl_");
+        }
+        $this->_curl = $curl;
     }
 
     /**
@@ -46,6 +53,9 @@ class Request implements \Bronto\Transfer\Request
     public function param($name, $value)
     {
         $this->_params[$name] = $value;
+        if (!empty($this->_body)) {
+            $this->_body = null;
+        }
         return $this;
     }
 
@@ -59,6 +69,18 @@ class Request implements \Bronto\Transfer\Request
     }
 
     /**
+     * @see parent
+     */
+    public function body($data)
+    {
+        $this->_body = $data;
+        if (!empty($this->_params)) {
+            $this->_params = array();
+        }
+        return $this;
+    }
+
+    /**
      * Adds the query parameters URL encoded to the base URI
      *
      * @return string
@@ -67,33 +89,31 @@ class Request implements \Bronto\Transfer\Request
     {
         $suffix = '';
         if (!empty($this->_query)) {
-            if (preg_match('/\?/', $this->_uri)) {
+            if (strpos($this->_uri, '?') === false) {
                 $suffix .= '?';
             } else {
                 $suffix .= '&';
             }
-            $suffix = http_build_query($this->_query);
+            $suffix .= http_build_query($this->_query);
         }
         return $this->_uri . $suffix;
     }
 
     /**
      * Prepares the cURL handle with all of the set options
-     *
-     * @param handle $ch
      */
-    protected function _prepareCurl($ch)
+    protected function _prepareCurl()
     {
         $prefix = "CURLOPT_";
         $pattern = '/([a-z0-9])([A-Z])/';
         foreach ($this->_options->toArray() as $curlOpt => $value) {
             // Assume we got a camelcase without a prefix
             if (!preg_match("/^{$prefix}/", $curlOpt)) {
-                $words = preg_replace($pattern, "$1_$2", $curlOpt));
+                $words = preg_replace($pattern, "$1_$2", $curlOpt);
                 $curlOpt = $prefix . strtoupper($words);
             }
             if (defined($curlOpt)) {
-                curl_setopt($ch, constant($curlOpt), $value);
+                $this->_curl->setopt(constant($curlOpt), $value);
             }
         }
     }
@@ -105,28 +125,28 @@ class Request implements \Bronto\Transfer\Request
      */
     protected function _completeRequest()
     {
-        $ch = curl_init($this->_createUri());
-        $this->_prepareCurl($ch);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
+        $this->_curl->init($this->_createUri());
+        $this->_prepareCurl();
+        $this->_curl->setopt(CURLOPT_RETURNTRANSFER, true);
+        $this->_curl->setopt(CURLOPT_HEADER, true);
         if ($this->_method != self::POST) {
             $this->_headers[] = "X-HTTP-Method-Override: {$this->_method}";
         }
         if (!empty($this->_headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->_headers);
+            $this->_curl->setopt(CURLOPT_HTTPHEADER, $this->_headers);
         }
-        if (!empty($this->_params)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->_params);
+        if (!empty($this->_params) || !empty($this->_body)) {
+            $this->_curl->setopt(CURLOPT_POSTFIELDS, empty($this->_body) ? $this->_params : $this->_body);
         }
-        $results = curl_exec($ch);
-        $code = curl_errno($ch);
+        $results = $this->_curl->exec();
+        $code = $this->_curl->errno();
         if ($code) {
-            $message = curl_error($ch);
-            curl_close($ch);
-            throw new \Bronto\Transfer\Exception($message, $code);
+            $message = $this->_curl->error();
+            $this->_curl->close();
+            throw new \Bronto\Transfer\Exception($message, $code, $this);
         }
-        $info = curl_getinfo($ch);
-        curl_close($ch);
+        $info = $this->_curl->getinfo();
+        $this->_curl->close();
         return array($results, $info);
     }
 
@@ -142,11 +162,14 @@ class Request implements \Bronto\Transfer\Request
         $headers = substr($results, 0, $info['header_size']);
         $body = substr($results, $info['header_size']);
         $table = array();
-        foreach (explode("\r\n", $headers) as $header) {
-            list($name, $value) = preg_split("/\\:\\s+/", $header, 1);
+        foreach (preg_split('/\r?\n/', $headers) as $header) {
+            if (!preg_match('/\:\s+/', $header)) {
+                continue;
+            }
+            list($name, $value) = preg_split("/\\:\\s+/", $header);
             $table[$name] = $value;
         }
-        return array($body, $table);
+        return array(trim($body), $table);
     }
 
     /**
@@ -156,6 +179,6 @@ class Request implements \Bronto\Transfer\Request
     {
         list($results, $info) = $this->_completeRequest();
         list($body, $headers) = $this->_parseHeaders($results, $info);
-        return new Response($body, $headers, $info['http_code']);
+        return new Response($body, $headers, $info);
     }
 }

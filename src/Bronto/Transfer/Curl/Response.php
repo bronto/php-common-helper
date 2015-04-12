@@ -12,20 +12,20 @@ class Response implements \Bronto\Transfer\Response
 {
     private $_results;
     private $_headers;
-    private $_code;
+    private $_info;
 
     /**
      * Everything needed to read results
      *
      * @param string $results
      * @param array $headers
-     * @param int $code
+     * @param array $info
      */
-    public function __construct($results, $headers, $code)
+    public function __construct($results, $headers, $info)
     {
         $this->_results = $results;
         $this->_headers = $headers;
-        $this->_code = $code;
+        $this->_info = new \Bronto\Object($info, true);
     }
 
     /**
@@ -49,6 +49,16 @@ class Response implements \Bronto\Transfer\Response
      */
     public function code()
     {
-        return $this->_code;
+        return $this->_info->getHttpCode();
+    }
+
+    /**
+     * Gets the cURL info for the transfer
+     *
+     * @return \Bronto\Object
+     */
+    public function info()
+    {
+        return $this->_info;
     }
 }

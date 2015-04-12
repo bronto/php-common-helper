@@ -42,6 +42,13 @@ interface Request
     public function query($name, $value);
 
     /**
+     * Some raw data to send
+     *
+     * @param string $data
+     */
+    public function body($data);
+
+    /**
      * Completes the built request and returns a
      * Response entity to interact with
      *

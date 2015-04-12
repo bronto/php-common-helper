@@ -182,9 +182,7 @@ PHP;
                 continue;
             }
 
-            if ($line == "\n") {
-                $popLine = true;
-            } else if (empty($namespace) && preg_match('/namespace\s+([^\s;]+)/', $line, $match)) {
+            if (empty($namespace) && preg_match('/namespace\s+([^\s;]+)/', $line, $match)) {
                 $namespace = str_replace("\\", '_', $match[1]);
                 foreach ($imports as $lookup => $replacement) {
                     $imports[$lookup] = str_replace('\\', '_', $namespace . '_' . $lookup);
@@ -214,8 +212,14 @@ PHP;
                 }
             }
 
-            $line = preg_replace("/([^A-Za-z0-9\\\\]+)\\\\(?:\\\\*)/", '${1}', $line);
-            $line = preg_replace("/\\\\(?:\\\\)?/", "_", $line);
+            // TODO: temp hack to get around preg escapes
+            // The better solution is to do a class_exist
+            // check on the derived name, but that has to
+            // come later
+            if (!preg_match('/preg_/', $line) && !preg_match("/\\\\x/", $line)) {
+                $line = preg_replace("/([^A-Za-z0-9\\\\]+)\\\\(?:\\\\*)/", '${1}', $line);
+                $line = preg_replace("/\\\\(?:\\\\)?/", "_", $line);
+            }
             $line = $this->_convertClassExists($namespace, $converted, $line);
             $converted[] = $line;
         }

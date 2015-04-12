@@ -10,11 +10,22 @@ namespace Bronto\Transfer;
  */
 class Exception extends \RuntimeException
 {
+    private $_request;
+
     /**
      * @see parent
      */
-    public function __construct($message, $code)
+    public function __construct($message, $code, $request)
     {
         parent::__construct($message, $code);
+        $this->_request = $request;
+    }
+
+    /**
+     * @return \Bronto\Transfer\Request
+     */
+    public function getRequest()
+    {
+        return $this->_request;
     }
 }

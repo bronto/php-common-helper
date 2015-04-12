@@ -77,4 +77,19 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($safe->isDefined());
         $this->assertTrue($object->safeFirstName()->isDefined());
     }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testUnderscore()
+    {
+        $object = new Object(array(), true);
+        $object
+            ->withFirstName('Philip')
+            ->withLastName('Cali')
+            ->withAge(99.99);
+        $expected = array('first_name' => 'Philip', 'last_name' => 'Cali', 'age' => 99.99);
+        $this->assertEquals($expected, $object->toArray());
+    }
 }
