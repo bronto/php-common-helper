@@ -7,7 +7,7 @@ namespace Bronto\Transfer\Curl;
  *
  * @author Philip Cali <philip.cali@bronto.com>
  */
-class Adatper implements \Bronto\Transfer\Adatper
+class Adapter implements \Bronto\Transfer\Adapter
 {
     protected $_options;
 
