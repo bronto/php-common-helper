@@ -10,15 +10,17 @@ namespace Bronto;
 class Object
 {
     protected $_data;
+    protected $_underscore;
 
     /**
      * Wrap an array holding the concrete data
      *
      * @param array $data
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = array(), $underscore = false)
     {
         $this->_data = $data;
+        $this->_underscore = $underscore;
     }
 
     /**
@@ -166,7 +168,8 @@ class Object
     protected function _camelizedValue($name)
     {
         if (preg_match('/^([^A-Z0-9]+).+/', $name, $match)) {
-            return array($match[1], $this->_stripAndLower($name, strlen($match[1])));
+            $modified = $this->_stripAndLower($name, strlen($match[1]));
+            return array($match[1], $this->_underscore ? Utils::underscore($modified) : $modified);
         }
         return array("", "");
     }
