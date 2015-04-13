@@ -29,7 +29,7 @@ class Utils
      * @param string $name
      * @return string
      */
-    public static function pluarize($name)
+    public static function pluralize($name)
     {
        if (preg_match('/y$/', $name)) {
             $name = preg_replace('/y$/', 'ies', $name);
