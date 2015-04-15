@@ -41,10 +41,10 @@ class Response implements \Bronto\Transfer\Response
         $body = substr($results, $info['header_size']);
         $table = array();
         foreach (preg_split('/\r?\n/', $headers) as $header) {
-            if (!preg_match('/\:\s+/', $header)) {
+            if (!preg_match('/\:\s*/', $header)) {
                 continue;
             }
-            list($name, $value) = preg_split("/\\:\\s+/", $header);
+            list($name, $value) = preg_split("/\\:\\s*/", $header);
             $table[$name] = $value;
         }
         return array(trim($body), $table);

@@ -51,7 +51,7 @@ class Multi
      */
     public function setPipeLining($pipeLining)
     {
-        $this->_multi->setopt(CURLMOPT_PIPELINING, true);
+        $this->_multi->setopt(CURLMOPT_PIPELINING, $pipeLining);
         return $this;
     }
 
