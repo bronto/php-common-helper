@@ -18,6 +18,7 @@ class Request implements \Bronto\Transfer\Request
     private $_headers = array();
     private $_params = array();
     private $_query = array();
+    private $_listeners = array();
 
     /**
      * Create a request builder with a method, uri, and options
@@ -31,11 +32,79 @@ class Request implements \Bronto\Transfer\Request
     {
         $this->_uri = $uri;
         $this->_method = $method;
-        $this->_options = $options;
+        $this->_options = new \Bronto\Object($options->toArray());
         if (is_null($curl)) {
             $curl = new \Bronto\Resource\Proxy("curl_");
         }
         $this->_curl = $curl;
+    }
+
+    /**
+     * Add event observers
+     *
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
+    public function __call($name, $args)
+    {
+        $return = array_shift($args);
+        if ($name == 'on') {
+            $callback = array_shift($args);
+            if (!array_key_exists($return, $this->_listeners)) {
+                $this->_listeners[$return] = array();
+            }
+            $this->_listeners[$return][] = $callback;
+            return $this;
+        } else if (array_key_exists($name, $this->_listeners)) {
+            foreach ($this->_listeners[$name] as $callback) {
+                $callback($return);
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Gets the cURL Options
+     *
+     * @return \Bronto\Object
+     */
+    public function getOptions()
+    {
+        return $this->_options;
+    }
+
+    /**
+     * Gets the proxy handle
+     *
+     * @return \Bronto\Resource\Proxy
+     */
+    public function getHandle()
+    {
+        return $this->_curl;
+    }
+
+    /**
+     * Prepares the underlying cURL request proxy
+     *
+     * @return self
+     */
+    public function prepare()
+    {
+        $this->_curl->init($this->_createUri());
+        $this->_prepareCurl();
+        $this->_curl->setopt(CURLOPT_RETURNTRANSFER, true);
+        $this->_curl->setopt(CURLOPT_HEADER, true);
+        if ($this->_method != self::POST) {
+            $this->_headers[] = "X-HTTP-Method-Override: {$this->_method}";
+        }
+        if (!empty($this->_headers)) {
+            $this->_curl->setopt(CURLOPT_HTTPHEADER, $this->_headers);
+        }
+        if (!empty($this->_params) || !empty($this->_body)) {
+            $this->_curl->setopt(CURLOPT_POSTFIELDS, empty($this->_body) ? $this->_params : $this->_body);
+        }
+        return $this;
     }
 
     /**
@@ -125,25 +194,13 @@ class Request implements \Bronto\Transfer\Request
      */
     protected function _completeRequest()
     {
-        $this->_curl->init($this->_createUri());
-        $this->_prepareCurl();
-        $this->_curl->setopt(CURLOPT_RETURNTRANSFER, true);
-        $this->_curl->setopt(CURLOPT_HEADER, true);
-        if ($this->_method != self::POST) {
-            $this->_headers[] = "X-HTTP-Method-Override: {$this->_method}";
-        }
-        if (!empty($this->_headers)) {
-            $this->_curl->setopt(CURLOPT_HTTPHEADER, $this->_headers);
-        }
-        if (!empty($this->_params) || !empty($this->_body)) {
-            $this->_curl->setopt(CURLOPT_POSTFIELDS, empty($this->_body) ? $this->_params : $this->_body);
-        }
+        $this->prepare();
         $results = $this->_curl->exec();
         $code = $this->_curl->errno();
         if ($code) {
             $message = $this->_curl->error();
             $this->_curl->close();
-            throw new \Bronto\Transfer\Exception($message, $code, $this);
+            throw $this->error(new \Bronto\Transfer\Exception($message, $code, $this));
         }
         $info = $this->_curl->getinfo();
         $this->_curl->close();
@@ -151,34 +208,11 @@ class Request implements \Bronto\Transfer\Request
     }
 
     /**
-     * Parse the response headers from the response body
-     *
-     * @param string $results
-     * @param array $info
-     * @return array(string, array)
-     */
-    protected function _parseHeaders($results, $info)
-    {
-        $headers = substr($results, 0, $info['header_size']);
-        $body = substr($results, $info['header_size']);
-        $table = array();
-        foreach (preg_split('/\r?\n/', $headers) as $header) {
-            if (!preg_match('/\:\s+/', $header)) {
-                continue;
-            }
-            list($name, $value) = preg_split("/\\:\\s+/", $header);
-            $table[$name] = $value;
-        }
-        return array(trim($body), $table);
-    }
-
-    /**
      * @see parent
      */
     public function respond()
     {
-        list($results, $info) = $this->_completeRequest();
-        list($body, $headers) = $this->_parseHeaders($results, $info);
-        return new Response($body, $headers, $info);
+        list($content, $info) = $this->_completeRequest();
+        return $this->complete(new Response($content, $info));
     }
 }

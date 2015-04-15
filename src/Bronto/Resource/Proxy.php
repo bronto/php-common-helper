@@ -14,6 +14,7 @@ class Proxy
 {
     protected $_resource;
     protected $_prefix;
+    protected $_excluded;
 
     /**
      * Construct the resource proxy with a prefix
@@ -21,9 +22,10 @@ class Proxy
      * @param string $prefix
      * @param resource $resource
      */
-    public function __construct($prefix, $resource = null)
+    public function __construct($prefix, $excluded = array(), $resource = null)
     {
         $this->_prefix = $prefix;
+        $this->_excluded = $excluded;
         $this->_resource = $resource;
     }
 
@@ -38,6 +40,18 @@ class Proxy
     }
 
     /**
+     * Sets the exclusion name
+     *
+     * @param string $name
+     * @return self
+     */
+    public function addExcluded($name)
+    {
+        $this->_excluded[$name] = true;
+        return $this;
+    }
+
+    /**
      * Get the underlying PHP function prefix
      *
      * @return string
@@ -45,6 +59,13 @@ class Proxy
     public function getPrefix()
     {
         return $this->_prefix;
+    }
+
+    public function byRef($name, &$value)
+    {
+        $function = $this->_prefix . Utils::underscore($name);
+        $return = call_user_func_array($function, array($this->_resource, &$value));
+        return $return;
     }
 
     /**
@@ -60,7 +81,7 @@ class Proxy
         if (!function_exists($function)) {
             throw new \BadMethodCallException("Resource function {$function} does not exist.");
         }
-        if (!is_null($this->_resource)) {
+        if (!array_key_exists($name, $this->_excluded) && !is_null($this->_resource)) {
             array_unshift($args, $this->_resource);
         }
         $return = call_user_func_array($function, $args);

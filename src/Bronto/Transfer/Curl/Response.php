@@ -17,16 +17,39 @@ class Response implements \Bronto\Transfer\Response
     /**
      * Everything needed to read results
      *
-     * @param string $results
-     * @param array $headers
+     * @param string $content
      * @param array $info
      */
-    public function __construct($results, $headers, $info)
+    public function __construct($content, $info)
     {
+        list($results, $headers) = $this->_parseHeaders($content, $info);
         $this->_results = $results;
         $this->_headers = $headers;
         $this->_info = new \Bronto\Object($info, true);
     }
+
+    /**
+     * Parse the response headers from the response body
+     *
+     * @param string $results
+     * @param array $info
+     * @return array(string, array)
+     */
+    protected function _parseHeaders($results, $info)
+    {
+        $headers = substr($results, 0, $info['header_size']);
+        $body = substr($results, $info['header_size']);
+        $table = array();
+        foreach (preg_split('/\r?\n/', $headers) as $header) {
+            if (!preg_match('/\:\s+/', $header)) {
+                continue;
+            }
+            list($name, $value) = preg_split("/\\:\\s+/", $header);
+            $table[$name] = $value;
+        }
+        return array(trim($body), $table);
+    }
+
 
     /**
      * @see parent
