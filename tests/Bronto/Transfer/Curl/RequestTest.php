@@ -270,4 +270,23 @@ RESPONSE;
             $this->assertEquals($request, $e->getRequest());
         }
     }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testOn()
+    {
+        $mock = $this->getMockBuilder('\Bronto\Object')
+            ->setMethods(array('getCalled'))
+            ->getMock();
+        $request = new Request('GET', 'http://google.com', new \Bronto\Object());
+        $request->on('event', function($mock) {
+            $mock->getCalled();
+        });
+        $mock->expects($this->once())
+            ->method('getCalled')
+            ->will($this->returnSelf());
+        $request->event($mock);
+    }
 }
