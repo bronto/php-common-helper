@@ -92,4 +92,27 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
         $expected = array('first_name' => 'Philip', 'last_name' => 'Cali', 'age' => 99.99);
         $this->assertEquals($expected, $object->toArray());
     }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testMagicSetter()
+    {
+        $object = new Object();
+        $object->id = 'abc123';
+        $object->name = 'Blade';
+        $expected = ['id' => 'abc123', 'name' => 'Blade'];
+        $this->assertEquals($expected, $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testMagicGetter()
+    {
+        $object = new Object(['name' => 'Blade']);
+        $this->assertEquals('Blade', $object->name);
+    }
 }

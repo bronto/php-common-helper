@@ -76,6 +76,31 @@ class Object
     }
 
     /**
+     * Gets the value associated with the data array
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (!array_key_exists($name, $this->_data)) {
+            return null;
+        }
+        return $this->_data[$name];
+    }
+
+    /**
+     * Sets the value associated on the data array
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $this->_data[$name] = $value;
+    }
+
+    /**
      * Allows the complete replacement of underlying data
      *
      * @param array $data
