@@ -24,6 +24,19 @@ class Utils
     }
 
     /**
+     * Normalize the name to use no punctuation and underscores
+     *
+     * @param string $name
+     * @return string
+     */
+    public static function normalize($name)
+    {
+        $name = preg_replace("/[^a-z0-9_]/i", '_', strtolower($name));
+        $name = trim(preg_replace('/_+/', '_', $name), ' _');
+        return $name;
+    }
+
+    /**
      * Simple pluralization for common names
      *
      * @param string $name
