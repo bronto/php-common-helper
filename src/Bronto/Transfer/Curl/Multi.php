@@ -63,7 +63,7 @@ class Multi
      */
     public function setExecuteEagerly($boolean)
     {
-        $this->_executeEagerly = false;
+        $this->_executeEagerly = $boolean;
         return $this;
     }
 
