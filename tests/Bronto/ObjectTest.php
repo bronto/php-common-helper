@@ -31,6 +31,28 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      * @test
      * @group pmc
      */
+    public function testIncrement()
+    {
+        $object = new Object(['total' => 1, 'success' => 1]);
+        $object->incrementSuccess()->incrementTotal(3);
+        $this->assertEquals(['total' => 4, 'success' => 2], $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testDecrement()
+    {
+        $object = new Object(['total' => 4, 'success' => 2]);
+        $object->decrementTotal(3)->decrementSuccess();
+        $this->assertEquals(['total' => 1, 'success' => 1], $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
     public function testMagicHas()
     {
         $object = new Object(array('firstName' => 'Philip'));

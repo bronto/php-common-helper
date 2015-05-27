@@ -43,16 +43,14 @@ class Object
         list($prefix, $camelized) = $this->_camelizedValue($name);
         switch ($prefix) {
         case 'get':
-            if (array_key_exists($camelized, $this->_data)) {
-                return $this->_data[$camelized];
+            $option = $this->_safe($camelized);
+            if (!$option->isEmpty()) {
+                return $option->get();
             }
             $this->_throwException("\\BadMethodCallException", "Could not find a value for $name in %s");
             break;
         case 'safe':
-            if (array_key_exists($camelized, $this->_data)) {
-                return new Functional\Some($this->_data[$camelized]);
-            }
-            return new Functional\None();
+            return $this->_safe($camelized);
         case 'unset':
             unset($this->_data[$camelized]);
             break;
@@ -66,13 +64,27 @@ class Object
         case 'decrement':
             $amount = isset($args[0]) ? $args[0] : 1;
             $amount *= ($prefix == 'decrement' ? -1 : 1);
-            $original = $this->{"safe{$camelized}"}()->getOrElse(0);
+            $original = $this->_safe($camelized)->getOrElse(0);
             $this->_set($camelized, $original + $amount);
             break;
         default:
             return $this->_defaultMethod($prefix, $camelized, $args);
         }
         return $this;
+    }
+
+    /**
+     * Safely retrieves the data for the camelized key
+     *
+     * @param string $camelized
+     * @return \Bronto\Functional\Option
+     */
+    protected function _safe($camelized)
+    {
+        if (array_key_exists($camelized, $this->_data)) {
+            return new Functional\Some($this->_data[$camelized]);
+        }
+        return new Functional\None();
     }
 
     /**
