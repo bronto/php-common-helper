@@ -19,7 +19,7 @@ abstract class LogAbstract implements LogInterface
      * @param int $targetLevel
      * @param boolean $backtrace
      */
-    public function __construct($targetLevel = LogInterface::ERROR, $backtrace = false)
+    public function __construct($targetLevel = LogInterface::INFO, $backtrace = true)
     {
         $this->_level = $targetLevel;
         $this->_requestBacktrace = $backtrace;
@@ -64,9 +64,14 @@ abstract class LogAbstract implements LogInterface
         }
         if ($this->_requestBacktrace) {
             $backtrace = array_slice(debug_backtrace(), 1);
-            $onePlace = array_shift($backtrace);
-            $twoPlace = array_shift($backtrace);
-            $backtrace = $twoPlace + $onePlace;
+            $fileInfo = array('class' => '');
+            if (count($backtrace) > 1) {
+                $fileInfo = array_shift($backtrace);
+            }
+            $backtrace = array_shift($backtrace) + $fileInfo;
+            if (empty($fileInfo['class'])) {
+                unset($backtrace['class']);
+            }
         } else {
             $backtrace = array();
         }

@@ -3,6 +3,7 @@
 namespace Bronto\Logger\Handler;
 
 use Bronto\Logger\LogHandler;
+use Bronto\Logger\LogInterface;
 
 /**
  * Console handler will output logs to the console.
@@ -40,7 +41,7 @@ class Console implements LogHandler
      */
     public function write($level, $message, $backtrace)
     {
-        echo $this->_prefix($level, $backtrace) . ' ' . $message . "\n"
+        echo $this->_prefix($level, $backtrace) . '- ' . $message . "\n";
     }
 
     /**
@@ -52,18 +53,20 @@ class Console implements LogHandler
      */
     protected function _prefix($level, $backtrace)
     {
-        $fileAndLine = '';
-        if (array_key_exists('file', $backtrace)) {
-            $fileAndLine = sprintf('%s:%d', $backtrace['file'], $backtrace['line']);
+        $fileAndLine = ' ';
+        if (array_key_exists('class', $backtrace) && !empty($backtrace['class'])) {
+            $fileAndLine = sprintf(' %s::%s:%d ',
+                $backtrace['class'],
+                $backtrace['function'],
+                $backtrace['line']);
         }
-        if (array_key_exists('function', $backtrace)) {
-            $func = $backtrace['function'];
-            $args = $backtrace['args'];
-            $functionAndArgs = $fileAndLine . ':' . $func. '(' . implode(', ', $args) . '):';
+        if ($fileAndLine == ' ' && array_key_exists('file', $backtrace)) {
+            $paths = pathinfo($backtrace['file']);
+            $fileAndLine = sprintf(' %s:%d ', $paths['basename'], $backtrace['line']);
         }
-        return sprintf('%d - [%s]%s:',
-            self::$_translate[$level],
+        return sprintf('%s %s%s',
             date($this->_format),
-            $functionAndArgs);
+            self::$_translate[$level],
+            $fileAndLine);
     }
 }

@@ -19,7 +19,7 @@ class LogCollection extends LogAbstract implements \IteratorAggregate
      * @param boolean $backtrace
      * @param array $handlers
      */
-    public function __construct($targetLevel = LogInterface::ERROR, $backtrace = false, $handlers = array())
+    public function __construct($targetLevel = LogInterface::INFO, $backtrace = true, $handlers = array())
     {
         parent::__construct($targetLevel, $backtrace);
         $this->_handlers = $handlers;

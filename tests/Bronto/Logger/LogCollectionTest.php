@@ -15,7 +15,7 @@ class LogCollectionTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('write'))
             ->getMock();
 
-        $collection = new LogCollection();
+        $collection = new LogCollection(LogInterface::ERROR, false);
         $collection->addHandler($mockHandler);
 
         $mockHandler->expects($this->once())
