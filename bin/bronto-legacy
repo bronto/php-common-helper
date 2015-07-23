@@ -142,7 +142,7 @@ PHP;
             $arg = $match[1];
             $legacyLookup = <<<PHP
         // Note: This snippet was generated with legacy conversion
-        if (is_string({$arg}) && !array_key_exists({$arg}, Bronto_ImportManager::\$_fileCache)) {
+        if (is_string({$arg}) && !class_exists({$arg}, false) && !array_key_exists({$arg}, Bronto_ImportManager::\$_fileCache)) {
             \$dir = str_replace(str_replace("_", "/", "{$namespace}"), '', dirname(__FILE__));
             \$file = \$dir . str_replace("_", "/", {$arg}) . '.php';
             if (file_exists(\$file)) {
