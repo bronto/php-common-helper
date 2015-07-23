@@ -154,7 +154,7 @@ PHP;
         }
         // End Conversion Snippet\n
 PHP;
-            return $legacyLookup . preg_replace($matcher, 'Bronto_ImportManager::$_fileCache[' . $arg . ']', $line);
+            return $legacyLookup . preg_replace($matcher, 'class_exists(' . $arg . ', false) && Bronto_ImportManager::$_fileCache[' . $arg . ']', $line);
         }
         return $line;
     }
