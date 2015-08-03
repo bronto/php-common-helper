@@ -38,10 +38,10 @@ abstract class Option implements Monadic
      * @param callable $function
      * @return Monadic
      */
-    public function each(callable $function)
+    public function each($function)
     {
         if ($this->isDefined()) {
-            $function($this->get());
+            call_user_func($function, $this->get());
         }
         return $this;
     }
@@ -51,9 +51,9 @@ abstract class Option implements Monadic
      * @param callable $function
      * @return Monadic
      */
-    public function filter(callable $function)
+    public function filter($function)
     {
-        if ($this->isDefined() && $function($this->get())) {
+        if ($this->isDefined() && call_user_func($function, $this->get())) {
             return $this;
         }
         return new None();
@@ -64,10 +64,10 @@ abstract class Option implements Monadic
      * @param callable $function
      * @return Monadic
      */
-    public function map(callable $function)
+    public function map($function)
     {
         if ($this->isDefined()) {
-            return new Some($function($this->get()));
+            return new Some(call_user_func($function, $this->get()));
         }
         return $this;
     }
@@ -92,10 +92,10 @@ abstract class Option implements Monadic
      * @param callable $function
      * @return Some
      */
-    public function orElse(callable $function)
+    public function orElse($function)
     {
         if ($this->isEmpty()) {
-            return new Some($function());
+            return new Some(call_user_func($function));
         }
         return $this;
     }
