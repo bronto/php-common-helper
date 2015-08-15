@@ -10,15 +10,17 @@ namespace Bronto;
 class Object
 {
     protected $_data;
+    protected $_underscore;
 
     /**
      * Wrap an array holding the concrete data
      *
      * @param array $data
      */
-    public function __construct(array $data = array())
+    public function __construct(array $data = array(), $underscore = false)
     {
         $this->_data = $data;
+        $this->_underscore = $underscore;
     }
 
     /**
@@ -41,16 +43,14 @@ class Object
         list($prefix, $camelized) = $this->_camelizedValue($name);
         switch ($prefix) {
         case 'get':
-            if (array_key_exists($camelized, $this->_data)) {
-                return $this->_data[$camelized];
+            $option = $this->_safe($camelized);
+            if (!$option->isEmpty()) {
+                return $option->get();
             }
             $this->_throwException("\\BadMethodCallException", "Could not find a value for $name in %s");
             break;
         case 'safe':
-            if (array_key_exists($camelized, $this->_data)) {
-                return new Functional\Some($this->_data[$camelized]);
-            }
-            return new Functional\None();
+            return $this->_safe($camelized);
         case 'unset':
             unset($this->_data[$camelized]);
             break;
@@ -64,13 +64,52 @@ class Object
         case 'decrement':
             $amount = isset($args[0]) ? $args[0] : 1;
             $amount *= ($prefix == 'decrement' ? -1 : 1);
-            $original = $this->{"safe{$camelized}"}()->getOrElse(0);
+            $original = $this->_safe($camelized)->getOrElse(0);
             $this->_set($camelized, $original + $amount);
             break;
         default:
             return $this->_defaultMethod($prefix, $camelized, $args);
         }
         return $this;
+    }
+
+    /**
+     * Safely retrieves the data for the camelized key
+     *
+     * @param string $camelized
+     * @return \Bronto\Functional\Option
+     */
+    protected function _safe($camelized)
+    {
+        if (array_key_exists($camelized, $this->_data)) {
+            return new Functional\Some($this->_data[$camelized]);
+        }
+        return new Functional\None();
+    }
+
+    /**
+     * Gets the value associated with the data array
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (!array_key_exists($name, $this->_data)) {
+            return null;
+        }
+        return $this->_data[$name];
+    }
+
+    /**
+     * Sets the value associated on the data array
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $this->_data[$name] = $value;
     }
 
     /**
@@ -166,7 +205,8 @@ class Object
     protected function _camelizedValue($name)
     {
         if (preg_match('/^([^A-Z0-9]+).+/', $name, $match)) {
-            return array($match[1], $this->_stripAndLower($name, strlen($match[1])));
+            $modified = $this->_stripAndLower($name, strlen($match[1]));
+            return array($match[1], $this->_underscore ? Utils::underscore($modified) : $modified);
         }
         return array("", "");
     }

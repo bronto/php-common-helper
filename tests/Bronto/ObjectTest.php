@@ -31,6 +31,28 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      * @test
      * @group pmc
      */
+    public function testIncrement()
+    {
+        $object = new Object(['total' => 1, 'success' => 1]);
+        $object->incrementSuccess()->incrementTotal(3);
+        $this->assertEquals(['total' => 4, 'success' => 2], $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testDecrement()
+    {
+        $object = new Object(['total' => 4, 'success' => 2]);
+        $object->decrementTotal(3)->decrementSuccess();
+        $this->assertEquals(['total' => 1, 'success' => 1], $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
     public function testMagicHas()
     {
         $object = new Object(array('firstName' => 'Philip'));
@@ -76,5 +98,43 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
         $safe = $object->safeTitle();
         $this->assertFalse($safe->isDefined());
         $this->assertTrue($object->safeFirstName()->isDefined());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testUnderscore()
+    {
+        $object = new Object(array(), true);
+        $object
+            ->withFirstName('Philip')
+            ->withLastName('Cali')
+            ->withAge(99.99);
+        $expected = array('first_name' => 'Philip', 'last_name' => 'Cali', 'age' => 99.99);
+        $this->assertEquals($expected, $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testMagicSetter()
+    {
+        $object = new Object();
+        $object->id = 'abc123';
+        $object->name = 'Blade';
+        $expected = ['id' => 'abc123', 'name' => 'Blade'];
+        $this->assertEquals($expected, $object->toArray());
+    }
+
+    /**
+     * @test
+     * @group pmc
+     */
+    public function testMagicGetter()
+    {
+        $object = new Object(['name' => 'Blade']);
+        $this->assertEquals('Blade', $object->name);
     }
 }
