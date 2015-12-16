@@ -1,7 +1,7 @@
 {
-  "name": "bronto/bronto-php-common",
+  "name": "bronto/php-common-helper",
   "keywords": ["bronto", "php", "common"],
-  "homepage": "http://dev.bronto.com",
+  "homepage": "https://github.com/bronto/php-common-helper",
   "license": "Apache-2.0",
   "version": "1.0.0",
   "require-dev": {

@@ -35,8 +35,8 @@ class Standard implements BiDirectional
             $error = 'Unknown error';
             if (array_key_exists($erroNo, self::$_enumToMsg)) {
                 $error = self::$_enumToMsg[$erroNo];
-                throw new Exception($error, $erroNo, $thingOrInput, $encoding);
             }
+            throw new Exception($error, $erroNo, $thingOrInput, $encoding);
         }
     }
 
