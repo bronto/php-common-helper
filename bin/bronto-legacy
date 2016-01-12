@@ -190,7 +190,7 @@ PHP;
                 $popLine = true;
             } else if (preg_match('/^use\s+([^\s;]+)/', $line, $match)) {
                 $lookup = end(explode('\\', $match[1]));
-                $imports[$lookup] = str_replace('\\', '_', $match[1]);
+                $imports[$lookup] = str_replace('\\', '_', ltrim($match[1], '\\'));
                 $popLine = true;
             } else if (preg_match('/^(?:abstract\s+)?(?:class|interface)/', $line)) {
                 $parentClass = true;
