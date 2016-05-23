@@ -50,12 +50,11 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com?q=this&q2=that');
 
-        $curl->expects($this->exactly(3))
+        $curl->expects($this->exactly(2))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array("X-HTTP-Method-Override: GET")))
+                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true))
             );
 
         $curl->expects($this->once())
@@ -154,7 +153,7 @@ RESPONSE;
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
                 array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array('Content-Type: application/json', 'Connection: keep-alive', "X-HTTP-Method-Override: GET")))
+                array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array('Content-Type: application/json', 'Connection: keep-alive')))
             );
 
         $curl->expects($this->once())
@@ -180,6 +179,28 @@ RESPONSE;
 
     /**
      * @test
+     * @gorup pmc
+     */
+    public function testPurge()
+    {
+        $curl = $this->_mockCurl();
+        $curl->expects($this->once())
+            ->method('init')
+            ->with('http://google.com');
+        $curl->expects($this->exactly(4))
+            ->method('setopt')
+            ->withConsecutive(
+                array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_CUSTOMREQUEST), $this->equalTo('PURGE')),
+                array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array("X-HTTP-Method-Override: PURGE")))
+            );
+        $request = new Request('PURGE', 'http://google.com', new \Bronto\Object(), $curl);
+        $request->prepare();
+    }
+
+    /**
+     * @test
      * @group pmc
      */
     public function testRawBody()
@@ -197,11 +218,12 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com');
 
-        $curl->expects($this->exactly(4))
+        $curl->expects($this->exactly(5))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
                 array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_CUSTOMREQUEST), $this->equalTo('PUT')),
                 array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array('Content-Type: application/json', 'Connection: keep-alive', "X-HTTP-Method-Override: PUT"))),
                 array($this->equalTo(CURLOPT_POSTFIELDS), $this->equalTo(json_encode($json)))
             );
@@ -240,12 +262,11 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com');
 
-        $curl->expects($this->exactly(3))
+        $curl->expects($this->exactly(2))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array("X-HTTP-Method-Override: GET")))
+                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true))
             );
 
         $curl->expects($this->once())
