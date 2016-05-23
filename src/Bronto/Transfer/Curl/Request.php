@@ -95,7 +95,8 @@ class Request implements \Bronto\Transfer\Request
         $this->_prepareCurl();
         $this->_curl->setopt(CURLOPT_RETURNTRANSFER, true);
         $this->_curl->setopt(CURLOPT_HEADER, true);
-        if ($this->_method != self::POST) {
+        if ($this->_method != self::POST && $this->_method != self::GET) {
+            $this->_curl->setopt(CURLOPT_CUSTOMREQUEST, $this->_method);
             $this->_headers[] = "X-HTTP-Method-Override: {$this->_method}";
         }
         if (!empty($this->_headers)) {
