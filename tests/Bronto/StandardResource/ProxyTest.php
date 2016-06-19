@@ -1,6 +1,6 @@
 <?php
 
-namespace Bronto\Resource;
+namespace Bronto\StandardResource;
 
 /**
  * Test cases for the resource Proxy

@@ -25,16 +25,16 @@ class Request implements \Bronto\Transfer\Request
      *
      * @param string $method
      * @param string $uri
-     * @param \Bronto\Object $options
-     * @param \Bronto\Resource\Proxy $curl
+     * @param \Bronto\DataObject $options
+     * @param \Bronto\StandardResource\Proxy $curl
      */
     public function __construct($method, $uri, $options, $curl = null)
     {
         $this->_uri = $uri;
         $this->_method = $method;
-        $this->_options = new \Bronto\Object($options->toArray());
+        $this->_options = new \Bronto\DataObject($options->toArray());
         if (is_null($curl)) {
-            $curl = new \Bronto\Resource\Proxy("curl_");
+            $curl = new \Bronto\StandardResource\Proxy("curl_");
         }
         $this->_curl = $curl;
     }
@@ -67,7 +67,7 @@ class Request implements \Bronto\Transfer\Request
     /**
      * Gets the cURL Options
      *
-     * @return \Bronto\Object
+     * @return \Bronto\DataObject
      */
     public function getOptions()
     {
@@ -77,7 +77,7 @@ class Request implements \Bronto\Transfer\Request
     /**
      * Gets the proxy handle
      *
-     * @return \Bronto\Resource\Proxy
+     * @return \Bronto\StandardResource\Proxy
      */
     public function getHandle()
     {

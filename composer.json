@@ -13,11 +13,7 @@
     },
     "psr-0": {
       "Bronto_": "legacy/src"
-    },
-    "files": [
-      "src/Bronto/functions.php",
-      "src/Bronto/Functional/functions.php"
-    ]
+    }
   },
   "bin": ["bin/bronto-legacy"],
   "scripts": {

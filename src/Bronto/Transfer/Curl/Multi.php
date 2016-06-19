@@ -22,7 +22,7 @@ class Multi
      */
     public function __construct($multi = null)
     {
-        $this->_multi = $multi ? $multi : new \Bronto\Resource\Proxy('curl_multi_');
+        $this->_multi = $multi ? $multi : new \Bronto\StandardResource\Proxy('curl_multi_');
         $this->_multi->addExcluded('getcontent');
         $this->_multi->init();
     }
