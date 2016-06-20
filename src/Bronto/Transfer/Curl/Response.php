@@ -25,7 +25,7 @@ class Response implements \Bronto\Transfer\Response
         list($results, $headers) = $this->_parseHeaders($content, $info);
         $this->_results = $results;
         $this->_headers = $headers;
-        $this->_info = new \Bronto\Object($info, true);
+        $this->_info = new \Bronto\DataObject($info, true);
     }
 
     /**
@@ -78,7 +78,7 @@ class Response implements \Bronto\Transfer\Response
     /**
      * Gets the cURL info for the transfer
      *
-     * @return \Bronto\Object
+     * @return \Bronto\DataObject
      */
     public function info()
     {

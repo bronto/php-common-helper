@@ -7,7 +7,7 @@ namespace Bronto;
  *
  * @author Philip Cali <philip.cali@bronto.com>
  */
-class Object
+class DataObject
 {
     protected $_data;
     protected $_underscore;

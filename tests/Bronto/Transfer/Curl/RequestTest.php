@@ -72,7 +72,7 @@ RESPONSE;
                 'http_code' => 200
             )));
 
-        $request = new Request('GET', 'http://google.com', new \Bronto\Object(), $curl);
+        $request = new Request('GET', 'http://google.com', new \Bronto\DataObject(), $curl);
         $response = $request
             ->query("q", "this")
             ->query("q2", "that")
@@ -125,7 +125,7 @@ RESPONSE;
                 'http_code' => 200
             )));
 
-        $request = new Request('POST', 'http://google.com', new \Bronto\Object(), $curl);
+        $request = new Request('POST', 'http://google.com', new \Bronto\DataObject(), $curl);
         $request->param('big', 'tasty')->param('disc', 'man');
         $response = $request->respond();
     }
@@ -171,7 +171,7 @@ RESPONSE;
                 'http_code' => 200
             )));
 
-        $request = new Request('GET', 'http://google.com', new \Bronto\Object(), $curl);
+        $request = new Request('GET', 'http://google.com', new \Bronto\DataObject(), $curl);
         $request->header('Content-Type', 'application/json')
             ->header('Connection', 'keep-alive');
         $response = $request->respond();
@@ -195,7 +195,7 @@ RESPONSE;
                 array($this->equalTo(CURLOPT_CUSTOMREQUEST), $this->equalTo('PURGE')),
                 array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array("X-HTTP-Method-Override: PURGE")))
             );
-        $request = new Request('PURGE', 'http://google.com', new \Bronto\Object(), $curl);
+        $request = new Request('PURGE', 'http://google.com', new \Bronto\DataObject(), $curl);
         $request->prepare();
     }
 
@@ -243,7 +243,7 @@ RESPONSE;
                 'http_code' => 200
             )));
 
-        $request = new Request('PUT', 'http://google.com', new \Bronto\Object(), $curl);
+        $request = new Request('PUT', 'http://google.com', new \Bronto\DataObject(), $curl);
         $request
             ->header('Content-Type', 'application/json')
             ->header('Connection', 'keep-alive')
@@ -281,7 +281,7 @@ RESPONSE;
             ->method('error')
             ->will($this->returnValue('Not Found!'));
 
-        $request = new Request('GET', 'http://google.com', new \Bronto\Object(), $curl);
+        $request = new Request('GET', 'http://google.com', new \Bronto\DataObject(), $curl);
         try {
             $response = $request->respond();
             $this->fail('Should not have made it here.');
@@ -298,10 +298,10 @@ RESPONSE;
      */
     public function testOn()
     {
-        $mock = $this->getMockBuilder('\Bronto\Object')
+        $mock = $this->getMockBuilder('\Bronto\DataObject')
             ->setMethods(array('getCalled'))
             ->getMock();
-        $request = new Request('GET', 'http://google.com', new \Bronto\Object());
+        $request = new Request('GET', 'http://google.com', new \Bronto\DataObject());
         $request->on('event', function($mock) {
             $mock->getCalled();
         });
