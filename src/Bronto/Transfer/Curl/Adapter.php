@@ -19,7 +19,7 @@ class Adapter implements \Bronto\Transfer\Adapter
     public function __construct($options = array())
     {
         if (is_array($options)) {
-            $this->_options = new \Bronto\Object($options);
+            $this->_options = new \Bronto\DataObject($options);
         } else {
             $this->_options = $options;
         }

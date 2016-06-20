@@ -1,6 +1,6 @@
 <?php
 
-namespace Bronto\Resource;
+namespace Bronto\StandardResource;
 
 use Bronto\Utils;
 

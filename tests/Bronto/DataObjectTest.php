@@ -3,11 +3,11 @@
 namespace Bronto;
 
 /**
- * Test case for Object
+ * Test case for DataObject
  *
  * @author Philip Cali <philip.cali@bronto.com>
  */
-class ObjectTest extends \PHPUnit_Framework_TestCase
+class DataObjectTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -20,7 +20,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
             'lastName' => 'Cali',
             'age' => 99.99
         );
-        $object = new Object($expected);
+        $object = new DataObject($expected);
 
         $this->assertEquals($expected['firstName'], $object->getFirstName());
         $this->assertEquals($expected['lastName'], $object->getLastName());
@@ -33,7 +33,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testIncrement()
     {
-        $object = new Object(['total' => 1, 'success' => 1]);
+        $object = new DataObject(['total' => 1, 'success' => 1]);
         $object->incrementSuccess()->incrementTotal(3);
         $this->assertEquals(['total' => 4, 'success' => 2], $object->toArray());
     }
@@ -44,7 +44,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testDecrement()
     {
-        $object = new Object(['total' => 4, 'success' => 2]);
+        $object = new DataObject(['total' => 4, 'success' => 2]);
         $object->decrementTotal(3)->decrementSuccess();
         $this->assertEquals(['total' => 1, 'success' => 1], $object->toArray());
     }
@@ -55,7 +55,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicHas()
     {
-        $object = new Object(array('firstName' => 'Philip'));
+        $object = new DataObject(array('firstName' => 'Philip'));
         $this->assertFalse($object->hasLastName());
         $this->assertTrue($object->hasFirstName());
     }
@@ -66,7 +66,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicUnset()
     {
-        $object = new Object(array('firstName' => 'Philip'));
+        $object = new DataObject(array('firstName' => 'Philip'));
         $this->assertEquals('Philip', $object->getFirstName());
         $object->unsetFirstName();
         $this->assertFalse($object->hasFirstName());
@@ -78,7 +78,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicSet()
     {
-        $object = new Object();
+        $object = new DataObject();
         $object->setFirstName('Philip')->withLastName('Cali');
         $this->assertEquals('Philip', $object->getFirstName());
         $this->assertEquals('Cali', $object->getLastName());
@@ -90,7 +90,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicSafe()
     {
-        $object = new Object();
+        $object = new DataObject();
         $object
             ->withFirstName('Philip')
             ->withLastName('Cali')
@@ -106,7 +106,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnderscore()
     {
-        $object = new Object(array(), true);
+        $object = new DataObject(array(), true);
         $object
             ->withFirstName('Philip')
             ->withLastName('Cali')
@@ -121,7 +121,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicSetter()
     {
-        $object = new Object();
+        $object = new DataObject();
         $object->id = 'abc123';
         $object->name = 'Blade';
         $expected = ['id' => 'abc123', 'name' => 'Blade'];
@@ -134,7 +134,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
      */
     public function testMagicGetter()
     {
-        $object = new Object(['name' => 'Blade']);
+        $object = new DataObject(['name' => 'Blade']);
         $this->assertEquals('Blade', $object->name);
     }
 }
