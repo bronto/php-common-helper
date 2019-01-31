@@ -40,4 +40,28 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
         $expected = "deliveries";
         $this->assertEquals($expected, \Bronto\Utils::pluralize($name));
     }
+    
+    /**
+     * @test
+     * @group pmc
+     * @dataProvider stringifyDataProvider
+     */
+    public function testStringify($testInput, $expectedOutput)
+    {
+    	$testOutput = \Bronto\Utils::stringify($testInput);
+    	$this->assertEquals($expectedOutput, $testOutput);
+    }
+    
+    public function stringifyDataProvider()
+    {
+    	$someObject = new \DateTime();
+    	return [
+    		["hello_world", "hello_world"],
+    		[false, "false (boolean)"],
+    		[37, "37"],
+    		[["hello", "world"], print_r(["hello", "world"], true)],
+    		[$someObject, print_r($someObject, true)]
+    	];
+    }
+    
 }
