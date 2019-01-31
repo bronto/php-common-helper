@@ -28,7 +28,7 @@ class ProxyTest extends \PHPUnit_Framework_TestCase
     {
         $str = 'Hello World!';
         $resource = new Proxy("f");
-        $resource->open('php://stdout', 'w');
+        $resource->open('php://temp', 'w');
         $bytes = $resource->write($str);
         $this->assertEquals(strlen($str), $bytes);
     }

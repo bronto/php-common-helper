@@ -2,3 +2,7 @@ vendor
 legacy
 composer.lock
 test.php
+.buildpath
+.project
+.settings
+.DS_Store
