@@ -58,16 +58,16 @@ class Utils
      * @param mixed $var
      * @return string
      */
-    public function stringify($var)
+    public static function stringify($var)
     {
-    	if (is_object($var)) {
-    		$var = method_exists($var, '__toString') ? strval($var) : print_r($var, true);
-    	} elseif (is_array($var)) {
-    		$var = print_r($var, true);
-    	} elseif (is_bool($var)) {
-    		$var = $var ? 'true (boolean)' : 'false (boolean)';
-    	}
-    	
-    	return strval($var);
+        if (is_object($var)) {
+            $var = method_exists($var, '__toString') ? strval($var) : print_r($var, true);
+        } elseif (is_array($var)) {
+            $var = print_r($var, true);
+        } elseif (is_bool($var)) {
+            $var = $var ? 'true (boolean)' : 'false (boolean)';
+        }
+
+        return strval($var);
     }
 }
