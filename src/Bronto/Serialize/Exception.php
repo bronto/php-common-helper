@@ -67,7 +67,7 @@ class Exception extends \RuntimeException
     public function __toString()
     {
         $payloadMessage = "Error occurred while " . (($this->_encoding) ?
-            "encoding: " . Utils::stringify($this->_thing) : "decoding: " . \Bronto\Utils::stringify($this->_input));
+            "encoding: " . Utils::stringify($this->_thing) : "decoding: " . Utils::stringify($this->_input));
         return parent::__toString() . PHP_EOL . $payloadMessage;
     }
 }
