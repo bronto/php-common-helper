@@ -1,6 +1,7 @@
 <?php
 
 namespace Bronto\Serialize;
+use Bronto\Utils;
 
 /**
  * An exception representative of a serialization problem
@@ -21,13 +22,13 @@ class Exception extends \RuntimeException
      */
     public function __construct($errorMessage, $errorNo, $thingOrInput, $encoding)
     {
-        parent::__construct($errorMessage, $errorNo);
         $this->_encoding = $encoding;
         if ($encoding) {
             $this->_thing = $thingOrInput;
         } else {
             $this->_input = $thingOrInput;
         }
+        parent::__construct($this->__toString(), $errorNo);
     }
 
     /**
@@ -65,9 +66,8 @@ class Exception extends \RuntimeException
      */
     public function __toString()
     {
-    	$payloadMessage = "Error occurred while " . (($this->_encoding) ? 
-    			"encoding: " . \Bronto\Utils::stringify($this->_thing) : "decoding: " . \Bronto\Utils::stringify($this->_input));
-    	
-    	return parent::__toString() . PHP_EOL . $payloadMessage;
+        $payloadMessage = "Error occurred while " . (($this->_encoding) ?
+            "encoding: " . Utils::stringify($this->_thing) : "decoding: " . Utils::stringify($this->_input));
+        return parent::__toString() . PHP_EOL . $payloadMessage;
     }
 }
