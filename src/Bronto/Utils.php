@@ -58,7 +58,7 @@ class Utils
      * @param mixed $var
      * @return string
      */
-    public function stringify($var)
+    public static function stringify($var)
     {
     	if (is_object($var)) {
     		$var = method_exists($var, '__toString') ? strval($var) : print_r($var, true);

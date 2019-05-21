@@ -50,11 +50,12 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com?q=this&q2=that');
 
-        $curl->expects($this->exactly(2))
+        $curl->expects($this->exactly(3))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true))
+                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_ENCODING), $this->equalTo('gzip'))
             );
 
         $curl->expects($this->once())
@@ -102,11 +103,12 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com');
 
-        $curl->expects($this->exactly(3))
+        $curl->expects($this->exactly(4))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
                 array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_ENCODING), $this->equalTo('gzip')),
                 array($this->equalTo(CURLOPT_POSTFIELDS), $this->equalTo(array('big' => 'tasty', 'disc' => 'man')))
             );
 
@@ -148,11 +150,12 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com');
 
-        $curl->expects($this->exactly(3))
+        $curl->expects($this->exactly(4))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
                 array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_ENCODING), $this->equalTo('gzip')),
                 array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array('Content-Type: application/json', 'Connection: keep-alive')))
             );
 
@@ -187,11 +190,12 @@ RESPONSE;
         $curl->expects($this->once())
             ->method('init')
             ->with('http://google.com');
-        $curl->expects($this->exactly(4))
+        $curl->expects($this->exactly(5))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
                 array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_ENCODING), $this->equalTo('gzip')),
                 array($this->equalTo(CURLOPT_CUSTOMREQUEST), $this->equalTo('PURGE')),
                 array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array("X-HTTP-Method-Override: PURGE")))
             );
@@ -218,11 +222,12 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com');
 
-        $curl->expects($this->exactly(5))
+        $curl->expects($this->exactly(6))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
                 array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_ENCODING), $this->equalTo('gzip')),
                 array($this->equalTo(CURLOPT_CUSTOMREQUEST), $this->equalTo('PUT')),
                 array($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array('Content-Type: application/json', 'Connection: keep-alive', "X-HTTP-Method-Override: PUT"))),
                 array($this->equalTo(CURLOPT_POSTFIELDS), $this->equalTo(json_encode($json)))
@@ -262,11 +267,12 @@ RESPONSE;
             ->method('init')
             ->with('http://google.com');
 
-        $curl->expects($this->exactly(2))
+        $curl->expects($this->exactly(3))
             ->method('setopt')
             ->withConsecutive(
                 array($this->equalTo(CURLOPT_RETURNTRANSFER), $this->equalTo(true)),
-                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true))
+                array($this->equalTo(CURLOPT_HEADER), $this->equalTo(true)),
+                array($this->equalTo(CURLOPT_ENCODING), $this->equalTo('gzip'))
             );
 
         $curl->expects($this->once())
