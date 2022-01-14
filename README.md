@@ -1,5 +1,7 @@
 # Bronto PHP Common Library
 
+**This package is archived and no longer maintained.**
+
 This package contains a number of common scripts and utilities used
 throughout the PHP packages provided by Bronto.
 
